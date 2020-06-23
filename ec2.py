@@ -9,7 +9,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def create_ec2_instance(image_id: str, instance_type: str, region: str):
+def create_ec2_instance(image_id: str, instance_type: str, region: str, key_name: str):
     """Provision and launch an EC2 instance and then returns even if
     instance is not yet running. Returns instance info or none if error
     """
@@ -30,6 +30,7 @@ def create_ec2_instance(image_id: str, instance_type: str, region: str):
             ],
             ImageId=image_id,
             InstanceType=instance_type,
+            KeyName=key_name,
             NetworkInterfaces=[{"AssociatePublicIpAddress": False, "DeviceIndex": 0,}],
             MinCount=1,
             MaxCount=1,
@@ -47,7 +48,7 @@ def create_key_pair(key_name, region: str, private_key_file_name=None):
     try:
         ec2_client = boto3.client("ec2", region_name=region)
         key_pair = ec2_client.create_key_pair(KeyName=key_name)
-        logger.info("Created key %s.", key_pair.name)
+        logger.info("Created key")
         if private_key_file_name is not None:
             with open(private_key_file_name, "w") as pk_file:
                 pk_file.write(key_pair.key_material)
@@ -59,7 +60,7 @@ def create_key_pair(key_name, region: str, private_key_file_name=None):
         return key_pair
 
 
-def launch_ec2_instance(region: str):
+def launch_ec2_instance(region: str, key_name: str):
     # amazon linux free tier AMI
     image_id = "ami-032598fcc7e9d1c7a"
     instance_type = "t2.micro"
@@ -68,7 +69,7 @@ def launch_ec2_instance(region: str):
         level=logging.DEBUG, format="%(levelname)s: %(asctime)s: %(message)s"
     )
 
-    instance_info = create_ec2_instance(image_id, instance_type, region)
+    instance_info = create_ec2_instance(image_id, instance_type, region, key_name)
     if instance_info is not None:
         logging.info(f'Launched EC2 Instance {instance_info["InstanceId"]}')
         logging.info(f'    VPC ID: {instance_info["VpcId"]}')

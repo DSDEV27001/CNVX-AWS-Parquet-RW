@@ -45,9 +45,9 @@ def main():
     url = f"s3://{BUCKET}/data.parquet"
     df_to_parquet(create_rand_int_df(), url)
     iam.create_ec2_s3_access_control(BUCKET)
-    ec2.launch_ec2_instance(REGION)
-    keypair = ec2.create_key_pair("connectEC2",REGION)
-    print(f"Your keypair is: {keypair}")
+    keypair = ec2.create_key_pair("connectEC2_", REGION)
+    print(f"Your keypair private key is: {keypair['KeyMaterial']}")
+    ec2.launch_ec2_instance(REGION,keypair["KeyName"])
 
 
 if __name__ == "__main__":
