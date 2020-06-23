@@ -81,8 +81,7 @@ def create_instance_profile(instance_profile_name: str):
 
 
 def create_ec2_s3_access_control(bucket_name: str):
-    """ Shows how to use the policy functions """
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    """configure ec2 s3 (and SSM) access control"""
     bucket_arn = f"arn:aws:s3:::{bucket_name}"
     policy = create_policy(
         f"AWSEC2-{bucket_name}-S3ReadOnlyAccess-Policy",
@@ -92,4 +91,5 @@ def create_ec2_s3_access_control(bucket_name: str):
     )
     create_role("AWSEC2-S3Access", ["ec2.amazonaws.com"])
     attach_policy_to_role("AWSEC2-S3Access", policy.arn)
+    attach_policy_to_role("AWSEC2-S3Access", "arn:aws:iam::aws:policy/AmazonSSMFullAccess")
     create_instance_profile("AWSEC2-S3Access")

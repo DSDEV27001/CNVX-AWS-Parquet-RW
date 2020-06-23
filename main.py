@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import logging
-import pyarrow
+import time
 import boto3
 import ec2, iam, s3
 from sys import stdout
@@ -45,8 +45,9 @@ def main():
     url = f"s3://{BUCKET}/data.parquet"
     df_to_parquet(create_rand_int_df(), url)
     iam.create_ec2_s3_access_control(BUCKET)
-    keypair = ec2.create_key_pair("connectEC2_", REGION)
+    keypair = ec2.create_key_pair("AWS-EC2-AL1", REGION)
     print(f"Your keypair private key is: {keypair['KeyMaterial']}")
+    time.sleep(10)
     ec2.launch_ec2_instance(REGION,keypair["KeyName"])
 
 

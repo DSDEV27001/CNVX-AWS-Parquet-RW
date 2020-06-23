@@ -62,7 +62,8 @@ def create_key_pair(key_name, region: str, private_key_file_name=None):
 
 def launch_ec2_instance(region: str, key_name: str):
     # amazon linux free tier AMI
-    image_id = "ami-032598fcc7e9d1c7a"
+
+    image_id = "ami-0330ffc12d7224386"
     instance_type = "t2.micro"
 
     logging.basicConfig(
