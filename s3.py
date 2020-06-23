@@ -1,7 +1,11 @@
 import logging
 import boto3
 from botocore.exceptions import ClientError
+from sys import stdout
 
+logging.basicConfig(
+    format="%(levelname)s:%(message)s", level=logging.INFO, stream=stdout
+)
 logger = logging.getLogger(__name__)
 
 

@@ -2,10 +2,10 @@ version: "3.8"
 
 services:
   app:
+#    environment:
+#      - profile=${PROFILE}
     build:
       context: .
-    ports:
-      - "80:80"
     volumes:
       - ./:/app
       -  $HOME/.aws/credentials:/home/user/.aws/credentials:ro

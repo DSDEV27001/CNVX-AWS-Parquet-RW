@@ -2,12 +2,16 @@ import json
 import logging
 import boto3
 from botocore.exceptions import ClientError
+from sys import stdout
 
+logging.basicConfig(
+    format="%(levelname)s:%(message)s", level=logging.INFO, stream=stdout
+)
 logger = logging.getLogger(__name__)
 iam = boto3.resource("iam")
 
 
-def create_policy(name: str, description: str, actions: str, resource_arn: str):
+def create_policy(name: str, description: str, actions: [str], resource_arn: str):
     """ Creates a policy and returns it """
     policy_doc = {
         "Version": "2012-10-17",
@@ -55,6 +59,7 @@ def create_role(role_name, allowed_services):
     else:
         return role
 
+
 def attach_policy_to_role(role_name, policy_arn):
     """ Attaches a policy to a role """
     try:
@@ -68,16 +73,14 @@ def attach_policy_to_role(role_name, policy_arn):
 def create_instance_profile(instance_profile_name: str):
     """ Creates a new instance profile"""
     try:
-        iam.create_instance_profile(
-            InstanceProfileName=instance_profile_name
-        )
+        iam.create_instance_profile(InstanceProfileName=instance_profile_name)
         logger.info(f"Created instance profile {instance_profile_name}.")
     except ClientError:
         logger.exception(f"Unable to create instance profile {instance_profile_name}.")
         raise
 
 
-def main(bucket_name: str):
+def create_ec2_s3_access_control(bucket_name: str):
     """ Shows how to use the policy functions """
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     bucket_arn = f"arn:aws:s3:::{bucket_name}"
